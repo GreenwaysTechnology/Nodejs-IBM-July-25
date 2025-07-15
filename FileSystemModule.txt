@@ -1,0 +1,77 @@
+....................................................................................
+			  IO apis
+....................................................................................
+1.file system io
+   file system io , how to read data from disk file
+2.network io
+
+
+File System IO:
+=>We can read and write files from the disk in  two ways
+  1.blocking way
+  2.nonblocking way
+=>We can read and write files using two mode
+  1.NonStreaming mode
+  2.Streaming mode
+=>All file operations are handled by
+  "Worker Threads" from Worker Thread Pool - either it is blocking or non blocking    io.
+=>Files are handled using callback style or promise style.
+=>Files operations are handled by "fs" module
+
+......................................................................................................................................................................................................................................
+											 File system operations
+.....................................................................................................................................................................................................................................
+
+1.create,read,write,update,delete,rename files and directories
+
+Two styles:
+
+1.callback style
+	 require('node:fs')
+2.promise style
+        require('node:fs/promises')
+
+Async                                            Sync
+fs.readFile                                  fs.readFileSync
+fs.writeFile                                  fs.writeFileSync
+fs.appendFile                             fs.appendFileSync
+fs.unlink                                      fs.unlinkSync   -- delete file
+etc...
+
+Async Read and Write:
+
+How to read File using nonblocking pattern? using callbacks
+
+fs.readFile(path[, options], callback)
+
+path <string> | <Buffer> | <URL> | <integer> filename or file descriptor
+options <Object> | <string>
+ encoding <string> | <null> Default: null
+ flag <string> See support of file system flags. Default: 'r'.
+ signal <AbortSignal> allows aborting an in-progress readFile
+
+callback <Function>
+  err <Error> | <AggregateError>
+  data <string> | <Buffer>
+
+const fs = require('node:fs')
+
+function blockMe(message) {
+    console.log(message)
+}
+
+function main() {
+    blockMe('start')
+    const filePath = './src/assets/info.txt'
+    const options = {
+        encoding: 'UTF-8'
+    }
+    fs.readFile(filePath, options, (err, data) => {
+        if (err) throw err
+        console.log(data)
+    })
+    blockMe('end')
+}
+main()
+***********************************************************************************************************************************************************
+
