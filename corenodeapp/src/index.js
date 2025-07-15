@@ -1,18 +1,53 @@
-//blocking and non blocking difference
+//get user,verify the user is valid, show dashboard if valid say admin other say guest
 
-function blockMe(message) {
-    console.log(message)
-}
-function greet(hello) {
-    //non blocking api -
-    setTimeout(hello, 5000)
-}
-
-function main() {
-    blockMe('start')
-    greet(function () {
-        console.log('greet')
+const getUser = () => {
+    console.log('getUser is called')
+    return new Promise((resolve, reject) => {
+        //declare mock user
+        let user = { name: 'admin' }
+        // let user;
+        if (user) {
+            setTimeout(resolve, 1000, user)
+        } else {
+            setTimeout(reject, 1000, 'User not found')
+        }
     })
-    blockMe('end')
+}
+const login = user => {
+    console.log('login is called')
+    return new Promise((resolve, reject) => {
+        if (user.name === 'admin') {
+            setTimeout(resolve, 1000, 'Login is Success')
+        } else {
+            setTimeout(reject, 1000, 'Login is Failed')
+        }
+    })
+}
+const showDashboard = status => {
+    console.log('showDashboard is called')
+    return new Promise((resolve, reject) => {
+        if (status === 'Login is Success') {
+            setTimeout(resolve, 1000, 'Welcome to Admin')
+        } else {
+            setTimeout(reject, 1000, 'Welcome  to Guest')
+        }
+    })
+}
+async function main() {
+
+    // getUser()
+    //     .then(user => login(user))
+    //     .then(status => showDashboard(status))
+    //     .then(page => console.log(page))
+    //     .catch(err => console.log(err))
+    try {
+        const user = await getUser()
+        const status = await login(user)
+        const page = await showDashboard(status)
+        console.log(page)
+    }
+    catch (err) {
+        console.log(err)
+    }
 }
 main()

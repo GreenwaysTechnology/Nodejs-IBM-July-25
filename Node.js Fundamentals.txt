@@ -114,7 +114,7 @@ Libuv offers
   Libuv has two types of threads
  1.Event loop thread - non blocking io thread
     It has only one event loop thread
-    ->handles network io operations - webservers, tcp servers, atagram servers
+    ->handles network io operations - webservers, tcp servers, datagram servers
  2.Worker pool thread - blocking io and tasks
     ->handles file io operations both non blocking and blocking
 
