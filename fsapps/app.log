@@ -1,0 +1,9 @@
+[2025-07-16T04:33:57.363Z] [INFO] Web Server started on Port 3000 
+[2025-07-16T04:33:57.364Z] [INFO] Database Server started on Port 1434 
+[2025-07-16T04:34:41.691Z] [INFO] Web Server started on Port 3000 
+[2025-07-16T04:34:41.693Z] [INFO] Database Server started on Port 1434 
+[2025-07-16T04:34:41.693Z] [ERROR] Unable to Start Message Broker 
+[2025-07-16T04:35:29.409Z] [INFO] Web Server started on Port 3000 
+[2025-07-16T04:35:29.411Z] [INFO] Database Server started on Port 1434 
+[2025-07-16T04:35:29.411Z] [ERROR] Unable to Start Message Broker 
+[2025-07-16T04:35:29.411Z] [WARN] High Memory Usage has been detected 
