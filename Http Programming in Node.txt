@@ -1,0 +1,205 @@
+		   								Http Programming in Node
+.......................................................................................................................................................................................................................................
+Node was created to build non blocking web server and web applications.
+Node provides single event loop thread which handles lot of concurrent http requests.
+Node offers high level http wrapper apis to talk to os apis.
+Node offers http as object.
+
+HTTP Objects
+
+1.Agent -  http.Agent
+  For handling connections between and server
+
+2.ClientRequest - http.clientRequest
+  For creating http clients
+
+3.Server - http.Server
+  For creating web servers, we can create app and deploy on top of server.
+  
+4.ServerResponse - http.ServerResponse
+  ServerResponse is outputstream of "http socket"
+
+5.IncomingMessage -http.IncomingMessage
+    The payload which is sent by client -  Message
+
+6.OutgoingMessage -http.OutgoingMessage
+    The data which is sent by server - Message
+
+
+7.Global Methods of http
+   1.createServer
+    factory method to create http server instance.
+
+HTTP events:
+ 
+ There are three types of events
+
+1.HTTP Request events
+  Which are triggered whenever client request is received by server
+  request.on('nameoftheevent',listner)
+
+2.Http Response events
+   Which are triggered whenever server response is sent by server
+  response.on('nameoftheevent',listner)
+
+3.Server Events
+   Server events are triggered during server startup,connection,handshake,request
+   server.on('nameoftheevent',listner)
+common events:
+ data
+ error
+ close
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+Simple Web Server:
+const http = require('node:http')
+
+const PORT = 3000 
+//create server
+const server = http.createServer((req, res) => {
+    //process client request and send response
+    res.write('Hello')
+    res.end()
+})
+
+//start the server
+server.listen(PORT,()=>{
+    console.log(`Http Server is listening at ${PORT}`)
+})
+**************************************************
+Attaching Server Events
+
+const http = require('node:http')
+
+const PORT = 3000
+//create server
+const server = http.createServer((req, res) => {
+    //process client request and send response
+    res.write('Hello')
+    res.end()
+})
+
+//start the server
+server.listen(PORT, () => {
+    console.log(`Http Server is listening at ${PORT}`)
+})
+
+//attach server event: request event
+server.on('request', (req, res) => {
+    console.log('Request Recived on', `[${new Date().toISOString()}]`, "URL is", req.url, "method ", req.method)
+})
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+										JSON response
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+const http = require('node:http')
+
+const PORT = 3000
+//create server
+const server = http.createServer((req, res) => {
+    //process client request and send response
+    const data = [{ id: 1, name: 'Subramanian'},{ id: 2, name: 'Murugan' }]
+    res.write(data)
+    res.end()
+})
+
+//start the server
+server.listen(PORT, () => {
+    console.log(`Http Server is listening at ${PORT}`)
+})
+
+//attach server event: request event
+server.on('request', (req, res) => {
+    console.log('Request Recived on', `[${new Date().toISOString()}]`, "URL is", req.url, "method ", req.method)
+
+})
+
+Http Server is listening at 3000
+node:_http_outgoing:949
+    throw new ERR_INVALID_ARG_TYPE(
+    ^
+
+TypeError [ERR_INVALID_ARG_TYPE]: The "chunk" argument must be of type string or an instance of Buffer or Uint8Array. Received an instance of Array
+    at write_ (node:_http_outgoing:949:11)
+    at ServerResponse.write (node:_http_outgoing:904:15)
+    at Server.<anonymous> (G:\IBM\2025\July\Node\httpapp\src\index.js:8:9)
+    at Server.emit (node:events:536:35)
+    at parserOnIncoming (node:_http_server:1153:12)
+    at HTTPParser.parserOnHeadersComplete (node:_http_common:117:17) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+
+Node.js v22.13.0
+
+Here we are trying to send array object, we cant , then we have to convert into string (json)
+
+const http = require('node:http')
+
+const PORT = 3000
+//create server
+const server = http.createServer((req, res) => {
+    //process client request and send response
+    const data = [{ id: 1, name: 'Subramanian' }, { id: 2, name: 'Murugan' }]
+    const jsonData = JSON.stringify(data)
+    res.writeHead(200, {
+        'Content-Type': 'application/json',
+    });
+    res.write(jsonData)
+    res.end()
+})
+
+//start the server
+server.listen(PORT, () => {
+    console.log(`Http Server is listening at ${PORT}`)
+})
+
+//attach server event: request event
+server.on('request', (req, res) => {
+    console.log('Request Recived on', `[${new Date().toISOString()}]`, "URL is", req.url, "method ", req.method)
+
+})
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+								  Modularization 
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+Controller  -  Web listener
+Services  -    Hold Biz logic
+
+Controller:
+const http = require('node:http')
+const todoService = require('./services/todo.service')
+
+const PORT = 3000
+const server = http.createServer((req, res) => {
+    const jsonData = JSON.stringify(todoService.findAll())
+    res.writeHead(200, {
+        'Content-Type': 'application/json',
+    });
+    res.write(jsonData)
+    res.end()
+})
+
+//start the server
+server.listen(PORT, () => {
+    console.log(`Http Server is listening at ${PORT}`)
+})
+
+//attach server event: request event
+server.on('request', (req, res) => {
+    console.log('Request Recived on', `[${new Date().toISOString()}]`, "URL is", req.url, "method ", req.method)
+
+})
+
+Service Layer:
+const TODOS = require('../mock-data/todos')
+
+class TodoService {
+
+    findAll() {
+        return TODOS
+    }
+}
+module.exports = new TodoService()
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+							Async apis and Modularization -  callbacks, promises
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
