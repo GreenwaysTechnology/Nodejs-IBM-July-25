@@ -1,23 +1,18 @@
-const fs = require('node:fs/promises')
+const fs = require('node:fs');
+const path = require('node:path');
 
-async function readTextFile() {
-    const filePath = './src/assets/info.txt'
-    const options = {
-        encoding: 'UTF-8'
-    }
-    // fs.readFile(filePath, options)
-    //     .then(data => console.log(data))
-    //     .catch(err => console.log(err))
-    try {
-        const data = await fs.readFile(filePath, options)
-        console.log(data)
-    }
-    catch (err) {
-        console.log(Error)
-    }
+const inputfileName = path.join(__dirname, 'assets/big.file');
+//write
+const outputFileName = path.join(__dirname, 'assets/bigcopy.file');
+
+const config = {
+      encoding: 'UTF-8'
 }
 
-function main() {
-    readTextFile()
-}
-main()
+//Back pressure handling
+const readerStream = fs.createReadStream(inputfileName, config);
+const writeStr = fs.createWriteStream(outputFileName, config);
+
+//backPressure streams
+//pipe method is simplest method which wraps resume,pasuse,drain 
+readerStream.pipe(http);
