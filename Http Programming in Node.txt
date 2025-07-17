@@ -203,3 +203,278 @@ module.exports = new TodoService()
 							Async apis and Modularization -  callbacks, promises
 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
+Callbacks:
+const TODOS = require('../mock-data/todos')
+
+class TodoService {
+
+    //async callback
+    findAll(resolve, reject) {
+        if (TODOS) {
+            setTimeout(resolve, 1000, TODOS)
+        } else {
+            setTimeout(reject, 1000, { message: 'Records Not Found' })
+        }
+    }
+}
+module.exports = new TodoService()
+
+const http = require('node:http')
+const { findAll } = require('./services/todo.service')
+
+const PORT = 3000
+const server = http.createServer((req, res) => {
+    findAll(todos => {
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+        });
+        const jsonData = JSON.stringify(todos)
+        res.write(jsonData)
+        res.end()
+    }, err => {
+        res.writeHead(500, {
+            'Content-Type': 'application/json',
+        });
+        res.write({ err: err })
+        res.end()
+    })
+})
+
+//start the server
+server.listen(PORT, () => {
+    console.log(`Http Server is listening at ${PORT}`)
+})
+
+//attach server event: request event
+server.on('request', (req, res) => {
+    console.log('Request Recived on', `[${new Date().toISOString()}]`, "URL is", req.url, "method ", req.method)
+
+})
+
+Promise Based:
+..........................
+const TODOS = require('../mock-data/todos')
+// const TODOS=null
+class TodoService {
+
+    //async callback
+    findAll() {
+        return new Promise((resolve, reject) => {
+            if (TODOS) {
+                setTimeout(resolve, 1000, TODOS)
+            } else {
+                setTimeout(reject, 1000, { message: 'Records Not Found' })
+            }
+        })
+    }
+}
+module.exports = new TodoService()
+
+Promise with Then and Catch:
+const http = require('node:http')
+const { findAll } = require('./services/todo.service')
+
+const PORT = 3000
+const server = http.createServer((req, res) => {
+
+    findAll().then(todos => {
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+        });
+        const jsonData = JSON.stringify(todos)
+        res.write(jsonData)
+        res.end()
+    }).catch(err => {
+        res.writeHead(500, {
+            'Content-Type': 'application/json',
+        });
+        res.write({ err: err })
+        res.end()
+    })
+
+})
+
+//start the server
+server.listen(PORT, () => {
+    console.log(`Http Server is listening at ${PORT}`)
+})
+
+//attach server event: request event
+server.on('request', (req, res) => {
+    console.log('Request Recived on', `[${new Date().toISOString()}]`, "URL is", req.url, "method ", req.method)
+
+})
+
+Promise with async and await:
+const http = require('node:http')
+const { findAll } = require('./services/todo.service');
+
+const PORT = 3000
+const server = http.createServer(async (req, res) => {
+
+    try {
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+        });
+        const todos = await findAll()
+        const jsonData = JSON.stringify(todos)
+        res.write(jsonData)
+        res.end()
+    }
+    catch (err) {
+        res.writeHead(500, {
+            'Content-Type': 'application/json',
+        });
+        res.write({ err: err })
+        res.end()
+    }
+
+
+})
+
+//start the server
+server.listen(PORT, () => {
+    console.log(`Http Server is listening at ${PORT}`)
+})
+
+//attach server event: request event
+server.on('request', (req, res) => {
+    console.log('Request Recived on', `[${new Date().toISOString()}]`, "URL is", req.url, "method ", req.method)
+
+})
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+											Payload
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+const http = require('node:http')
+
+const PORT = 3000
+//create server
+const server = http.createServer((req, res) => {
+    //how to read input
+    let data = ''
+    req.on('data', (chunk) => {
+        data += chunk
+    })
+    req.on('end', () => {
+        console.log(data)
+        res.end('Saved')
+    })
+})
+
+//start the server
+server.listen(PORT, () => {
+    console.log(`Http Server is listening at ${PORT}`)
+})
+
+//attach server event: request event
+server.on('request', (req, res) => {
+    console.log('Request Recived on', `[${new Date().toISOString()}]`, "URL is", req.url, "method ", req.method)
+
+})
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+									CURD - HTTP module
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+const http = require('node:http')
+
+const PORT = 3000
+//create server
+const server = http.createServer((req, res) => {
+    const { method, url } = req
+    if (method === 'GET') {
+        res.end('GET')
+    } else if (method === 'POST') {
+        res.end('POST')
+    } else if (method === 'PUT') {
+        res.end('PUT')
+    } else if (method === 'DELETE') {
+        console.log('delete is called')
+        res.end('DELETE')
+    } else {
+        res.end('NOT Supported')
+    }
+
+})
+
+//start the server
+server.listen(PORT, () => {
+    console.log(`Http Server is listening at ${PORT}`)
+})
+
+//attach server event: request event
+server.on('request', (req, res) => {
+    console.log('Request Recived on', `[${new Date().toISOString()}]`, "URL is", req.url, "method ", req.method)
+
+})
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+									HTTP, With FS Module
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//Upload file from client
+const http = require('node:http');
+const fs = require('node:fs');
+
+const server = http.createServer((req, res) => {
+    if (req.method === "POST") {
+        const fileStream = fs.createWriteStream('uploaded_file.txt');
+        //inputstream.pipe(outputstream)
+        req.pipe(fileStream); // Pipe the request data into the file
+        req.on('end', () => {
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.end('File saved successfully!');
+        });
+    } else {
+        res.writeHead(405, { 'Content-Type': 'text/plain' });
+        res.end('Only POST method is supported');
+    }
+
+})
+
+server.listen(3000, () => {
+    console.log('Server is up and running!')
+});
+
+server.on('request', (req, res) => {
+    console.log('Request Recived on', new Date(), "URL is", req.url, "method ", req.method)
+})
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+									   Building RestFull web services
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+1.Resources
+   Customer, Product, Item, Payment
+
+2.API
+   findAll,findBYId,update,Remove,filter
+
+3.URL 
+   Resources and apis must be identified by URL
+
+4.APIs are mapped against HTTP verbs
+  Read - GET
+  Save  -POST
+  update - PUT
+  remove -  DELETE
+
+Each Resource is identified by unique url
+
+  /api/customer
+  /api/products
+
+Each Resource has collection of apis and which mapped against HTTP verbs
+
+ findAll - GET
+
+Having core node.js http module we cant build production ready webservices with minimum code, we need to write plenty of boiler plate code.
+
+				Node.js team in the beginning started working on an abstraction called "framework"
+			   						"Express.js"
+
+
+
+
+
+
+
+
+
+
+
