@@ -342,4 +342,163 @@ app.get('/', (req, res) => {
 const server = app.listen(PORT, () => {
     console.log(`Express server is Running at ${server.address().port}`)
 })
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+										Parameters - Path Parameter and Query Parameter
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+Path Parameter:
+
+ GET /api/customers/1 
+ GET /api/customers/2 
+
+How to read parameter
+router | app.get('/:id',(req,res)=>{
+  const id = req.params.id
+})
+
+const express = require('express')
+const PORT = 3000
+const app = express()
+
+app.get('/', (req, res) => {
+    res.end('Hello Express')
+})
+app.get('/api/users/:id',(req,res)=>{
+    console.log(req.params.id)
+    res.end('Path param')
+})
+
+const server = app.listen(PORT, () => {
+    console.log(`Express server is Running at ${server.address().port}`)
+})
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+									Dynamic Parameters : Query Parameters	
+
+URL Pattern:
+localhost:3000/api/customers/filter?city=chennai&state=TN
+
+const express = require('express')
+const PORT = 3000
+const app = express()
+
+app.get('/', (req, res) => {
+    res.end('Hello Express')
+})
+app.get('/api/users',(req,res)=>{
+    const variables = req.query
+    console.log(variables.city ,variables.state) 
+    res.end('Path param')
+})
+
+const server = app.listen(PORT, () => {
+    console.log(`Express server is Running at ${server.address().port}`)
+})
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+									CURD - Operation using Array
 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+const express = require('express')
+const userRouter = express.Router()
+
+const users = [{
+    id: 1,
+    name: 'Erik',
+    email: 'erik@gmail.com'
+},
+{
+    id: 2,
+    name: 'Subramanian',
+    email: 'subu@gmail.com'
+}]
+
+//findAll
+userRouter.get('/', async (req, res) => {
+    try {
+        res.json(users)
+    }
+    catch (err) {
+        console.log(err)
+    }
+})
+//findById
+userRouter.get('/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id)
+        const user = users.find(u => u.id === id)
+        if (!user) {
+            //error resonse
+            res.status(404).json({ error: 'User Not Found' })
+        }
+        //throw new Error('something happened')
+        res.status(200).json(user)
+    }
+    catch (err) {
+        console.log(err)
+        res.status(404).json({ error: err })
+    }
+})
+//save
+userRouter.post('/', async (req, res) => {
+    try {
+        let data = ''
+        req.on('data', (chunk) => {
+            data += chunk
+        })
+        req.on('end', () => {
+            let parsedUser = JSON.parse(data)
+            const newUser = { id: users.length + 1, name: parsedUser.name, email: parsedUser.email }
+            users.push(newUser)
+            res.status(201).json(newUser)
+        })
+    }
+    catch (err) {
+        console.log(err)
+    }
+})
+//update : PUT /:id
+userRouter.put('/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id)
+        let data = ''
+        req.on('data', (chunk) => {
+            data += chunk
+        })
+        req.on('end', () => {
+            let parsedUser = JSON.parse(data)
+            const user = users.find(u => u.id === id)
+            if (!user) {
+                //error resonse
+                res.status(404).json({ error: 'User Not Found' })
+            }
+            //update
+            user.name = parsedUser.name
+            user.email = parsedUser.email
+            res.json(user)
+        })
+    }
+    catch (err) {
+        console.log(err)
+    }
+})
+
+//Delete
+userRouter.delete('/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id)
+        const index = users.findIndex(u => u.id === id)
+        if (index === -1) {
+            res.status(404).json({ error: 'User Not Found' })
+        }
+        const deletedUser = users.splice(index, 1)[0]
+        res.json(deletedUser)
+    }
+    catch (err) {
+        console.log(err)
+        res.status(404).json({ error: err })
+    }
+})
+
+module.exports = userRouter;
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+
