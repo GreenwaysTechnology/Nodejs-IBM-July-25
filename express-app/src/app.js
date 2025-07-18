@@ -1,20 +1,30 @@
 const express = require('express')
-const bodyParser = require('body-parser')
-const PORT = 3000
 const app = express()
+const cors = require('cors')
 
-//register body parser middleware
-app.use(bodyParser.json())
+// const corsOptions = {
+//     origin: 'http://www.abce.com'
+// }
+//allow only from this url.
+const corsOptions = {
+    origin: 'http://127.0.0.1:5500'
+}
+app.use(cors(corsOptions))
 
-app.use('/api/users', require('./routers/user.router'))
-app.use('/api/posts', require('./routers/post.router'))
-app.use('/api/comments', require('./routers/comments.router'))
+//allow any body to access this app
+// app.use(cors())
 
 app.get('/', (req, res) => {
-    res.end('Hello Express')
+    res.end('Home Page')
+})
+
+
+app.get('/api/customers/:id', (req, res, next) => {
+    res.json({ msg: 'cors enabled for only this particular' })
 })
 
 //start server
-const server = app.listen(PORT, () => {
-    console.log(`Express server is Running at ${server.address().port}`)
+const server = app.listen(3000, () => {
+    console.log(server.address())
+    console.log(`Express is running @ ${server.address().port}`)
 })
