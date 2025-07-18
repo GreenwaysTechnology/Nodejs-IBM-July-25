@@ -41,13 +41,16 @@ userRouter.get('/:id', async (req, res) => {
 //save
 userRouter.post('/', async (req, res) => {
     try {
-        //read payload
-        // const payload = req.body
-        const { name, email } = req.body
-        // const newUser = { id: users.length + 1, name: name, email: email }
-        const newUser = { id: users.length + 1, name, email }
-        users.push(newUser)
-        res.status(201).json(newUser)
+        let data = ''
+        req.on('data', (chunk) => {
+            data += chunk
+        })
+        req.on('end', () => {
+            let parsedUser = JSON.parse(data)
+            const newUser = { id: users.length + 1, name: parsedUser.name, email: parsedUser.email }
+            users.push(newUser)
+            res.status(201).json(newUser)
+        })
     }
     catch (err) {
         console.log(err)
@@ -57,15 +60,22 @@ userRouter.post('/', async (req, res) => {
 userRouter.put('/:id', async (req, res) => {
     try {
         const id = parseInt(req.params.id)
-        const { name, email } = req.body
-        const user = users.find(u => u.id === id)
-        if (!user) {
-            res.status(404).json({ error: 'User Not Found' })
-        }
-        //update
-        user.name = name || user.name
-        user.email = email || user.email
-        res.json(user)
+        let data = ''
+        req.on('data', (chunk) => {
+            data += chunk
+        })
+        req.on('end', () => {
+            let parsedUser = JSON.parse(data)
+            const user = users.find(u => u.id === id)
+            if (!user) {
+                //error resonse
+                res.status(404).json({ error: 'User Not Found' })
+            }
+            //update
+            user.name = parsedUser.name
+            user.email = parsedUser.email
+            res.json(user)
+        })
     }
     catch (err) {
         console.log(err)
