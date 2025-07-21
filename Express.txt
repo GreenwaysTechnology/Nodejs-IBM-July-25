@@ -524,13 +524,6 @@ Tasks are middleware is doing:
 2.Make changes to request and response object before handling real req and res cycle.
 3.Middlwares can be attached on application object and also router object
 
-Tasks are middleware is doing:
-
-1.Execute any code
-2.Make changes to request and response object before handling real req and res cycle.
-3.Middlwares can be attached on application object and also router object
-
-
 use Method
   use method is used to registry middleware.
 
@@ -1124,3 +1117,119 @@ In the browser console.
 content_script_bundle.js:1 Attempting initialization Mon Jul 15 2024 20:48:41 GMT+0530 (India Standard Time)
 index.html:1 Access to fetch at 'http://localhost:3001/api/customers/1' from origin 'http://127.0.0.1:5500' has been blocked by CORS policy: The 'Access-Control-Allow-Origin' header has a value 'http://www.abce.com' that is not equal to the supplied origin. Have the server send the header with a valid value, or, if an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.Understand this error
 index.html:13 
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+										 Logger
+.................................................................................................................................................................................................................................
+
+In Express, we have many logger implementation ...
+
+Morgan:
+   HTTP request logger middleware for node.js
+
+How to use Morgan
+
+Steps:
+
+npm install morgan
+
+const express = require('express')
+const app = express()
+const fs = require('node:fs')
+const path = require('node:path')
+const morgan = require('morgan')
+
+//console log information
+// app.use(morgan('dev'))
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+
+app.use(morgan('combined', { stream: accessLogStream }))
+
+app.get('/api/greet',(req,res)=>{
+    res.send('Hello')
+})
+
+//start server
+const server = app.listen(3000, () => {
+    console.log(server.address())
+    console.log(`Express is running @ ${server.address().port}`)
+})
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+									express.static middleware
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+To serve static files such as HTML,CSS,js,images and fonts can be served using the built-in middleware called express.static
+
+you dont need to install any dependency.
+
+project structure 
+
+express-app
+   src
+	public
+		index.html
+     app.js
+
+const express = require('express')
+const app = express()
+const fs = require('node:fs')
+const path = require('node:path')
+const morgan = require('morgan')
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+app.use(morgan('combined', { stream: accessLogStream }))
+//register to serve static pages : it looks index.html automatically.
+app.use(express.static(path.join(__dirname, "public")))
+
+
+//start server
+const server = app.listen(3000, () => {
+    console.log(server.address())
+    console.log(`Express is running @ ${server.address().port}`)
+})
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+										Externalization of config information
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+Some of the information should be externalized like PORT, Database connections ,user names, password.
+
+npm install dotenv --save
+
+
+express-app(project dir)
+ |
+.env
+	PORT=3000
+
+app.js
+const express = require('express')
+const app = express()
+const fs = require('node:fs')
+const path = require('node:path')
+const morgan = require('morgan')
+//configure .env file into code
+// const dotenv = require('dotenv')
+// dotenv.config()
+require('dotenv').config()
+
+//here we read PORT From enviroment, before that we need to set
+const PORT = process.env.PORT || 3000
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+app.use(morgan('combined', { stream: accessLogStream }))
+
+
+app.get('/api/greet', (req, res) => {
+    res.send('Hello')
+})
+
+//start server
+const server = app.listen(PORT, () => {
+    console.log(server.address())
+    console.log(`Express is running @ ${server.address().port}`)
+})
+
+ 
+
+
+
+
