@@ -1444,14 +1444,164 @@ const server = app.listen(PORT, () => {
     console.log(server.address())
     console.log(`Express is running @ ${server.address().port}`)
 })
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+											 Express ,Prisma ,SQL
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+Set up Prisma framework:
+........................
+
+Relational databases
+
+Prerequisites
+1.an existing Node.js project with a package.json
+
+2.Node.js installed on your machine
+
+3.A database server running and a database with at least one table
+  (we are going sqlite db)
+
+create project with all dependency:
+
+ Note: we are going to use in-memory database called sqlite.
+
+\prismaSQL>npm init --yes
+
+npm i express body-parser
+npm i nodemon --save-dev
+npm install prisma --save-dev
+npm install @prisma/client
+
+
+npx prisma
+
+Prisma is a modern DB toolkit to query, migrate and model your database (https://prisma.io)
+
+Usage
+
+  $ prisma [command]
+
+Commands
+
+            init   Set up Prisma for your app
+        generate   Generate artifacts (e.g. Prisma Client)
+              db   Manage your database schema and lifecycle
+         migrate   Migrate your database
+          studio   Browse your data with Prisma Studio
+        validate   Validate your Prisma schema
+          format   Format your Prisma schema
+         version   Displays Prisma version info
+           debug   Displays Prisma debug info
+
+Flags
+
+npx prisma init
+
+creates a new directory called prisma that contains a file called schema.prisma, which contains the Prisma schema with your database connection variable and schema models
+creates the .env file in the root directory of the project, which is used for defining environment variables (such as your database connection)
+
+
+npx prisma init --datasource-provider sqlite
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+.env
+PORT=3000
+
+# This was inserted by `prisma init`:
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+DATABASE_URL="file:./dev.db"
+....................................................................................
+				connect db
+....................................................................................
+
+Already we have connection string defined in ".env" file and provider in prisma.schema
+.....................................................................................
+				Prisma client
+
+Prima client is object which is responsible for talking to database 
+
+which provides apis for all database operations - CURD operations
+
+npm install @prisma/client
+
+.....................................................................................
+				Define model(Entity)
+....................................................................................
+
+Model represents table in database.
+
+1.Represent the entities of your application domain
+2.Map to the tables (relational databases like PostgreSQL) or collections (MongoDB)   in your database
+3.Form the foundation of the queries available in the generated Prisma Client API
+4.When used with TypeScript, Prisma Client provides generated type definitions for  your models and any variations of them to make database access entirely type safe.
 
 
 
 
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+//define model - describe table structure; database independent
+//User is mapped against table
+model User {
+  // fields- columns
+  id    Int     @id @default(autoincrement())
+  name  String?
+  email String  @unique
+}
 
 
+Database Migration step:
+
+Which creates scripts
+
+npx prisma migrate dev
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": SQLite database "dev.db" at "file:./dev.db"
+
+SQLite database dev.db created at file:./dev.db
+
+√ Enter a name for the new migration: ... mymigration
+Applying migration `20240209080353_mymigration`
+
+The following migration(s) have been created and applied from new schema changes:
+
+migrations/
+  └─ 20240209080353_mymigration/
+    └─ migration.sql
+
+Your database is now in sync with your schema.
+
+✔ Generated Prisma Client (v5.9.1) to .\node_modules\@prisma\client in 64ms
 
 
+Testing :
+ Whether all tables are created inside db or not
 
-
-
+>npx prisma studio
