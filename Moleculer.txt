@@ -1203,7 +1203,25 @@ async function main() {
     }
 }
 main()
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+											API Gate-Building Rest API
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
+moleculer-web :
+   The moleculer-web is the official API gateway service for Moleculer framework.
+    Use it to publish your services as RESTful APIs.
 
-
+Features
+1.support HTTP & HTTPS
+2.serve static files
+3.multiple routes
+4.support Connect-like middlewares in global-level, route-level and alias-level.
+5.alias names (with named parameters & REST routes)
+6.whitelist
+7.multiple body parsers (json, urlencoded)
+8.CORS headers
+9.Rate limiter
+10.before & after call hooks
+11.Buffer & Stream handling
+12.middleware mode (use as a middleware with Express)
 
