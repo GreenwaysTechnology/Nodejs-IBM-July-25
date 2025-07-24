@@ -2153,4 +2153,325 @@ async function main() {
     }
 }
 main()
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+											Logger
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+Moleculer provides different logging configurations
 
+const { ServiceBroker } = require('moleculer')
+const ApiGateWay = require('moleculer-web')
+
+// const broker = new ServiceBroker({
+//     serializer: "JSON", // not necessary to set, because it is the default
+//     logger: 'Console'
+// })
+// const broker = new ServiceBroker({
+//     serializer: "JSON", // not necessary to set, because it is the default
+//     logger: 'File'
+// })
+
+// const broker = new ServiceBroker({
+//     serializer: "JSON", // not necessary to set, because it is the default
+//     logger: 'Pino'
+// })
+
+const broker = new ServiceBroker({
+    serializer: "JSON", // not necessary to set, because it is the default
+    logger: 'Bunyan'
+})
+
+broker.createService({
+    name: 'productservice',
+    actions: {
+        findAll: {
+            async handler(ctx) {
+                const products = await fetch('https://dummyjson.com/products')
+                const productsJson = await products.json()
+                return productsJson
+            }
+        },
+        findById: {
+            async handler(ctx) {
+                const id = Number(ctx.params.id)
+                const url = `https://dummyjson.com/products/${id}`
+                const response = await fetch(url)
+                const product = await response.json()
+                return product
+            }
+        }
+    }
+})
+
+broker.createService({
+    name: 'products',
+    actions: {
+        list: {
+            rest: "GET /",
+            async handler(ctx) {
+                const products = await ctx.call('productservice.findAll')
+                return products
+            }
+        },
+        get: {
+            rest: "GET /:id",
+            async handler(ctx) {
+                const { id } = ctx.params
+                const product = await ctx.call('productservice.findById', { id: id })
+                return product
+
+            }
+        },
+        create: {
+            rest: "POST /",
+            handler(ctx) {
+                const payload = ctx.params
+                // console.log(payload)
+                //    console.log(this.logger)
+                this.logger.info(payload)
+                return 'Post  Products'
+            }
+        },
+        update: {
+            rest: "PUT /:id",
+            handler(ctx) {
+                return 'Update all Products'
+            }
+        },
+        remove: {
+            rest: "DELETE /:id",
+            handler(ctx) {
+                return 'Remove  Products'
+            }
+        }
+    }
+})
+
+
+broker.createService({
+    name: 'ApiGateWay',
+    mixins: [ApiGateWay],
+    settings: {
+        routes: [
+            {
+                path: '/api',
+                aliases: {
+                    //custom end point configuration
+                },
+                autoAliases: true
+            }
+        ]
+    }
+})
+
+async function main() {
+    try {
+        await broker.start()
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+										Caching
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+if api is called for data which calls internally database or external end points.
+
+if api returns the same data again and again, why should i execute queries or calling third party api
+
+Caching provides high level performance.
+
+Without Caching:
+const { ServiceBroker } = require('moleculer')
+
+const broker = new ServiceBroker({
+    logger: "Console"
+})
+
+broker.createService({
+    name: 'user',
+    actions: {
+        list: {
+            handler(ctx) {
+                this.logger.info('handler is called')
+                return [{
+                    id: 1, name: 'Subramanian'
+                },
+                {
+                    id: 2, name: 'Murugan'
+                }]
+            }
+        }
+    }
+})
+
+async function main() {
+    try {
+        await broker.start()
+        broker.repl()
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+
+output
+>> Call 'user.list' with params: {} with meta: { '$repl': true }
+[2024-07-20T06:14:47.170Z] INFO  desktop-kaufcr7-9376/USER: handler is called
+>> Execution time:3ms
+>> Response:
+[ { id: 1, name: 'Subramanian' }, { id: 2, name: 'Murugan' } ]
+mol $ call user.list
+>> Call 'user.list' with params: {} with meta: { '$repl': true }
+[2024-07-20T06:14:56.589Z] INFO  desktop-kaufcr7-9376/USER: handler is called
+>> Execution time:1ms
+>> Response:
+[ { id: 1, name: 'Subramanian' }, { id: 2, name: 'Murugan' } ]
+mol $ call user.list
+>> Call 'user.list' with params: {} with meta: { '$repl': true }
+[2024-07-20T06:14:59.203Z] INFO  desktop-kaufcr7-9376/USER: handler is called
+>> Execution time:5ms
+>> Response:
+[ { id: 1, name: 'Subramanian' }, { id: 2, name: 'Murugan' } ]
+mol $ call user.list
+>> Call 'user.list' with params: {} with meta: { '$repl': true }
+[2024-07-20T06:15:00.348Z] INFO  desktop-kaufcr7-9376/USER: handler is called
+>> Execution time:5ms
+>> Response:
+[ { id: 1, name: 'Subramanian' }, { id: 2, name: 'Murugan' } ]
+
+now you can notice, this method is called more number of times 
+
+Types of caching:
+..................
+
+1.InMemory Caching
+   once the app is restarted , then all cache data will be lost but stores all cached
+data in "RAM".
+
+const broker = new ServiceBroker({
+    cacher: "Memory"
+});
+const broker = new ServiceBroker({
+    cacher: true
+});
+const { ServiceBroker } = require('moleculer')
+
+const broker = new ServiceBroker({
+    logger: "Console",
+    cacher: "Memory" //type of cache configuration
+})
+broker.createService({
+    name: 'user',
+    actions: {
+        list: {
+            //meta configurations
+            cache: true,
+            handler(ctx) {
+                this.logger.info('user service is called')
+                return [{
+                    id: 1, name: 'Subramanian'
+                },
+                {
+                    id: 2, name: 'Murugan'
+                }]
+            }
+        }
+    }
+})
+async function main() {
+    try {
+        await broker.start()
+        broker.repl()
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+
+Redis Cache:
+
+1.you have to start redis server.
+
+docker run --name some-redis -p 6379:6379  redis
+
+2.install redis driver.
+ npm install ioredis
+
+3.redis configuration
+const broker = new ServiceBroker({
+    logger: "Console",
+    cacher: "redis://localhost:6379"
+})
+
+Code:
+const { ServiceBroker } = require('moleculer')
+
+// const broker = new ServiceBroker({
+//     logger: "Console",
+//     cacher: "Memory"
+// })
+
+const broker = new ServiceBroker({
+    logger: "Console",
+    cacher: "redis://localhost:6379"
+})
+
+
+broker.createService({
+    name: 'user',
+    actions: {
+        list: {
+            //list method now is cached
+            cache: true,
+            handler(ctx) {
+                this.logger.info('handler is called')
+                return [{
+                    id: 1, name: 'Subramanian'
+                },
+                {
+                    id: 2, name: 'Murugan'
+                }]
+            }
+        }
+    }
+})
+
+async function main() {
+    try {
+        await broker.start()
+        broker.repl()
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+
+Testing:
+
+mol $ call user.list
+>> Call 'user.list' with params: {} with meta: { '$repl': true }
+[2024-07-20T06:34:25.583Z] INFO  desktop-kaufcr7-12256/USER: handler is called
+>> Execution time:7ms
+>> Response:
+[ { id: 1, name: 'Subramanian' }, { id: 2, name: 'Murugan' } ]
+mol $ call user.list
+>> Call 'user.list' with params: {} with meta: { '$repl': true }
+>> Execution time:4ms
+>> Response:
+[ { id: 1, name: 'Subramanian' }, { id: 2, name: 'Murugan' } ]
+mol $
+
+Verify against Redis Server
+
+redis-cli
+127.0.0.1:6379> keys *
+1) "MOL-user.list:"
+127.0.0.1:6379> GET MOL-user.list: 
+"[{\"id\":1,\"name\":\"Subramanian\"},{\"id\":2,\"name\":\"Murugan\"}]"
+127.0.0.1:6379> 

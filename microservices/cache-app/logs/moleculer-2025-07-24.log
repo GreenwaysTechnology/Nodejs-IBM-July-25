@@ -1,0 +1,47 @@
+[2025-07-24T07:16:33.413Z] INFO  desktop-kaufcr7-49944/BROKER: Moleculer v0.14.35 is starting...
+[2025-07-24T07:16:33.413Z] INFO  desktop-kaufcr7-49944/BROKER: Namespace: <not defined>
+[2025-07-24T07:16:33.413Z] INFO  desktop-kaufcr7-49944/BROKER: Node ID: desktop-kaufcr7-49944
+[2025-07-24T07:16:33.414Z] INFO  desktop-kaufcr7-49944/REGISTRY: Strategy: RoundRobinStrategy
+[2025-07-24T07:16:33.414Z] INFO  desktop-kaufcr7-49944/REGISTRY: Discoverer: LocalDiscoverer
+[2025-07-24T07:16:33.424Z] INFO  desktop-kaufcr7-49944/BROKER: Serializer: JSONSerializer
+[2025-07-24T07:16:33.435Z] INFO  desktop-kaufcr7-49944/BROKER: Validator: FastestValidator
+[2025-07-24T07:16:33.436Z] INFO  desktop-kaufcr7-49944/BROKER: Registered 13 middleware(s).
+[2025-07-24T07:16:33.450Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: API Gateway server created.
+[2025-07-24T07:16:33.450Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: Register route to '/api'
+[2025-07-24T07:16:33.473Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: ♻ Generate aliases for '/api' route...
+[2025-07-24T07:16:33.474Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: 
+[2025-07-24T07:16:33.486Z] INFO  desktop-kaufcr7-49944/REGISTRY: '$node' service is registered.
+[2025-07-24T07:16:33.487Z] INFO  desktop-kaufcr7-49944/REGISTRY: 'productservice' service is registered.
+[2025-07-24T07:16:33.487Z] INFO  desktop-kaufcr7-49944/REGISTRY: 'products' service is registered.
+[2025-07-24T07:16:33.488Z] INFO  desktop-kaufcr7-49944/$NODE: Service '$node' started.
+[2025-07-24T07:16:33.488Z] INFO  desktop-kaufcr7-49944/PRODUCTSERVICE: Service 'productservice' started.
+[2025-07-24T07:16:33.488Z] INFO  desktop-kaufcr7-49944/PRODUCTS: Service 'products' started.
+[2025-07-24T07:16:33.493Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: API Gateway listening on http://localhost:3000
+[2025-07-24T07:16:33.494Z] INFO  desktop-kaufcr7-49944/REGISTRY: 'ApiGateWay' service is registered.
+[2025-07-24T07:16:33.494Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: Service 'ApiGateWay' started.
+[2025-07-24T07:16:33.494Z] INFO  desktop-kaufcr7-49944/BROKER: ✔ ServiceBroker with 4 service(s) started successfully in 20ms.
+[2025-07-24T07:16:33.996Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: ♻ Generate aliases for '/api' route...
+[2025-07-24T07:16:34.004Z] INFO  desktop-kaufcr7-49944/APIGATEWAY:      GET /api/products => products.list
+[2025-07-24T07:16:34.005Z] INFO  desktop-kaufcr7-49944/APIGATEWAY:      GET /api/products/:id => products.get
+[2025-07-24T07:16:34.006Z] INFO  desktop-kaufcr7-49944/APIGATEWAY:     POST /api/products => products.create
+[2025-07-24T07:16:34.006Z] INFO  desktop-kaufcr7-49944/APIGATEWAY:      PUT /api/products/:id => products.update
+[2025-07-24T07:16:34.006Z] INFO  desktop-kaufcr7-49944/APIGATEWAY:   DELETE /api/products/:id => products.remove
+[2025-07-24T07:16:34.007Z] INFO  desktop-kaufcr7-49944/APIGATEWAY:      GET /api/ApiGateWay/list-aliases => ApiGateWay.listAliases
+[2025-07-24T07:17:00.161Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: => POST /api/products
+[2025-07-24T07:17:00.173Z] INFO  desktop-kaufcr7-49944/APIGATEWAY:    Call 'products.create' action
+[2025-07-24T07:17:00.173Z] INFO  desktop-kaufcr7-49944/PRODUCTS: { id: 1, name: 'Product1' }
+[2025-07-24T07:17:00.175Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: <= 200 POST /api/products [+14.956 ms]
+[2025-07-24T07:17:08.889Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: => POST /api/products
+[2025-07-24T07:17:08.889Z] INFO  desktop-kaufcr7-49944/APIGATEWAY:    Call 'products.create' action
+[2025-07-24T07:17:08.889Z] INFO  desktop-kaufcr7-49944/PRODUCTS: { id: 1, name: 'Product1' }
+[2025-07-24T07:17:08.889Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: <= 200 POST /api/products [+0.990 ms]
+[2025-07-24T07:17:12.774Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: => POST /api/products
+[2025-07-24T07:17:12.774Z] INFO  desktop-kaufcr7-49944/APIGATEWAY:    Call 'products.create' action
+[2025-07-24T07:17:12.774Z] INFO  desktop-kaufcr7-49944/PRODUCTS: { id: 1, name: 'Product1' }
+[2025-07-24T07:17:12.774Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: <= 200 POST /api/products [+0.836 ms]
+[2025-07-24T07:18:59.958Z] INFO  desktop-kaufcr7-49944/$NODE: Service '$node' stopped.
+[2025-07-24T07:18:59.958Z] INFO  desktop-kaufcr7-49944/PRODUCTSERVICE: Service 'productservice' stopped.
+[2025-07-24T07:18:59.958Z] INFO  desktop-kaufcr7-49944/PRODUCTS: Service 'products' stopped.
+[2025-07-24T07:18:59.958Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: API Gateway stopped!
+[2025-07-24T07:18:59.958Z] INFO  desktop-kaufcr7-49944/APIGATEWAY: Service 'ApiGateWay' stopped.
+[2025-07-24T07:18:59.959Z] INFO  desktop-kaufcr7-49944/BROKER: ServiceBroker is stopped. Good bye.
