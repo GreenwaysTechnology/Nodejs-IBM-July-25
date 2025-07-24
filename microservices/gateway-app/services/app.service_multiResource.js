@@ -83,8 +83,19 @@ broker.createService({
             {
                 path: '/api',
                 aliases: {
-                    "REST products": "products",
-                    "REST customers ": "customers"
+                    //Products Resource
+                    "GET products": "products.list",
+                    "GET products/:id": "products.get", //products/1 products/2 
+                    "POST products": "products.create",
+                    "PUT products/:id": "products.update",
+                    "DELETE products/:id": "products.remove",
+
+                    //customers Resource
+                    "GET customers": "customers.list",
+                    "GET customers/:id": "customers.get", //products/1 products/2 
+                    "POST customers": "customers.create",
+                    "PUT customers/:id": "customers.update",
+                    "DELETE customers/:id": "customers.remove"
                 }
             }
         ]

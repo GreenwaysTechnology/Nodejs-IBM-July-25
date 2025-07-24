@@ -41,41 +41,6 @@ broker.createService({
 })
 
 broker.createService({
-    name: 'customers',
-    actions: {
-        list: {
-            handler(ctx) {
-                return 'Get all customers'
-            }
-        },
-        get: {
-            handler(ctx) {
-                const params = ctx.params
-                console.log(params)
-                return 'Get customers By Id ' + params.id
-            }
-        },
-        create: {
-            handler(ctx) {
-                const payload = ctx.params
-                console.log(payload)
-                return 'Post  customers'
-            }
-        },
-        update: {
-            handler(ctx) {
-                return 'Update customers'
-            }
-        },
-        remove: {
-            handler(ctx) {
-                return 'Remove  customers'
-            }
-        }
-    }
-})
-
-broker.createService({
     name: 'ApiGateWay',
     mixins: [ApiGateWay],
     settings: {
@@ -83,8 +48,11 @@ broker.createService({
             {
                 path: '/api',
                 aliases: {
-                    "REST products": "products",
-                    "REST customers ": "customers"
+                    "GET products": "products.list",
+                    "GET products/:id": "products.get", //products/1 products/2 
+                    "POST products": "products.create",
+                    "PUT products/:id": "products.update",
+                    "DELETE products/:id": "products.remove"
                 }
             }
         ]
