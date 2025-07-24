@@ -5,45 +5,23 @@ const broker = new ServiceBroker({
     serializer: "JSON" // not necessary to set, because it is the default
 })
 
-broker.createService({
-    name: 'productservice',
-    actions: {
-        findAll: {
-            async handler(ctx) {
-                const products = await fetch('https://dummyjson.com/products')
-                const productsJson = await products.json()
-                return productsJson
-            }
-        },
-        findById: {
-            async handler(ctx) {
-                const id = Number(ctx.params.id)
-                const url = `https://dummyjson.com/products/${id}`
-                const response = await fetch(url)
-                const product = await response.json()
-                return product
-            }
-        }
-    }
-})
+//back end service can be converted as rest api
 
 broker.createService({
     name: 'products',
     actions: {
         list: {
             rest: "GET /",
-            async handler(ctx) {
-                const products = await ctx.call('productservice.findAll')
-                return products
+            handler(ctx) {
+                return 'Get all Products'
             }
         },
         get: {
             rest: "GET /:id",
-            async handler(ctx) {
-                const { id } = ctx.params
-                const product = await ctx.call('productservice.findById', { id: id })
-                return product
-                
+            handler(ctx) {
+                const params = ctx.params
+                console.log(params)
+                return 'Get Products By Id ' + params.id
             }
         },
         create: {

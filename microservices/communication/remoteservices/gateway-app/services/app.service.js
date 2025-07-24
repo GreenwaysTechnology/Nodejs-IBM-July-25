@@ -2,29 +2,7 @@ const { ServiceBroker } = require('moleculer')
 const ApiGateWay = require('moleculer-web')
 
 const broker = new ServiceBroker({
-    serializer: "JSON" // not necessary to set, because it is the default
-})
-
-broker.createService({
-    name: 'productservice',
-    actions: {
-        findAll: {
-            async handler(ctx) {
-                const products = await fetch('https://dummyjson.com/products')
-                const productsJson = await products.json()
-                return productsJson
-            }
-        },
-        findById: {
-            async handler(ctx) {
-                const id = Number(ctx.params.id)
-                const url = `https://dummyjson.com/products/${id}`
-                const response = await fetch(url)
-                const product = await response.json()
-                return product
-            }
-        }
-    }
+    transporter: 'TCP'
 })
 
 broker.createService({
@@ -68,7 +46,6 @@ broker.createService({
         }
     }
 })
-
 
 broker.createService({
     name: 'ApiGateWay',
